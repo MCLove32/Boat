@@ -1,0 +1,9 @@
+name: Boat
+version: '${project.version}'
+main: azisaba.net.boat.Boat
+api-version: '1.19'
+
+commands:
+  boat:
+    permission: boat.command.boat
+    description: ボートコンフィグをリロードする。

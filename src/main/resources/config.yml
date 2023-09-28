@@ -1,0 +1,10 @@
+
+Boat:
+  #パケットの氷の広さ。+-それぞれ記入値になります。xとzに適応。
+  ice-range: 8
+  #設置するパケットの氷の種類。ICE系以外入れるとマジで意味ない。
+  ice-place: PACKED_ICE
+  #Shift右クリでランダムでBoatが出るべきかどうか。falseならboat-type-setのBoatの種類でだします。
+  boat-type: true
+  #ボートの種類。変な者入れるとエラー。
+  boat-type-set: OAK
