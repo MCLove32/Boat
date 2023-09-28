@@ -11,9 +11,11 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
+import java.util.*;
 
 public class PlayerUtil {
+
+    private static final List<String> boatList = new ArrayList<>(azisaba.net.boat.Boat.get().getConfig().getStringList("Boat.ice-placeable-block"));
 
     @NotNull
     public static Channel getChannel(@NotNull Player player) throws IllegalAccessException, NoSuchFieldException {
@@ -32,7 +34,17 @@ public class PlayerUtil {
     }
 
     public static boolean isRoad(Material m) {
-        return m == Material.WHITE_CONCRETE || m == Material.LIGHT_GRAY_CONCRETE || m == Material.GRAY_CONCRETE || m == Material.BLACK_CONCRETE;
+
+        Set<Material> set = new HashSet<>();
+        for (String s: boatList) {
+            try {
+                Material get = Material.valueOf(s);
+                set .add(get);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            }
+        }
+        return set.contains(m);
     }
 
     public static Boat.Type getBoat(int ran) {

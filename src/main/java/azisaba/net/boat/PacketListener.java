@@ -13,6 +13,9 @@ import org.bukkit.craftbukkit.v1_19_R3.block.data.CraftBlockData;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class PacketListener extends ChannelDuplexHandler {
 
     private final Player p;
@@ -21,11 +24,26 @@ public class PacketListener extends ChannelDuplexHandler {
     }
     private static final int range = Boat.get().getConfig().getInt("Boat.ice-range", 8);
     private static final Material ice = Material.valueOf(Boat.get().getConfig().getString("Boat.ice-place", "PACKED_ICE"));
+    private static final Set<String> worlds = new HashSet<>(Boat.get().getConfig().getStringList("Boat.enable-worlds"));
+    private static final boolean isAgainst = Boat.get().getConfig().getBoolean("Boat.disable", false);
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 
         if (msg instanceof PacketPlayInVehicleMove) {
+
+            if (isAgainst) {
+                if (!(worlds.contains(p.getWorld().getName()))) {
+                    super.channelRead(ctx, msg);
+                    return;
+                }
+
+            } else {
+                if (worlds.contains(p.getWorld().getName())) {
+                    super.channelRead(ctx, msg);
+                    return;
+                }
+            }
 
             int x = p.getLocation().getBlockX();
             int y = (int) (p.getLocation().getY());

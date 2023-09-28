@@ -8,3 +8,14 @@ Boat:
   boat-type: true
   #ボートの種類。変な者入れるとエラー。
   boat-type-set: OAK
+  #パケットの氷に置き換えるべきブロックリスト
+  ice-placeable-block:
+    - WHITE_CONCRETE
+    - LIGHT_GRAY_CONCRETE
+    - GRAY_CONCRETE
+    - BLACK_CONCRETE
+  #falseの場合、enable-worldsがこのプラグインのBoat機能を無効になる。逆にtrueの場合は、enable-worldsのみがBoatの機能を有効になる。。
+  disable: false
+  #対象のワールド
+  enable-worlds:
+    - boat_world_nether
