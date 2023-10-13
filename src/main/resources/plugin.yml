@@ -1,7 +1,9 @@
 name: Boat
 version: '${project.version}'
 main: azisaba.net.boat.Boat
-api-version: '1.19'
+api-version: '1.20'
+depend:
+  - mmoUtils
 
 commands:
   boat:

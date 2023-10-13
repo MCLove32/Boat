@@ -1,6 +1,6 @@
 package azisaba.net.boat;
 
-import io.netty.channel.Channel;
+import azisaba.net.mmoutils.MMOUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -19,7 +19,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-import static org.bukkit.Bukkit.getLogger;
+import static azisaba.net.boat.PlayerUtil.getBoat;
 
 public class BoatListener implements Listener {
 
@@ -27,18 +27,6 @@ public class BoatListener implements Listener {
     private static final Set<String> ct = new HashSet<>();
     private static final boolean needType = azisaba.net.boat.Boat.get().getConfig().getBoolean("Boat.boat-type", true);
     private static final Boat.Type BoatType = Boat.Type.valueOf(azisaba.net.boat.Boat.get().getConfig().getString("Boat.boat-type-set", "OAK"));
-
-    @EventHandler
-    public void onJoin(@NotNull PlayerJoinEvent e) {
-
-        Player p = e.getPlayer();
-        try {
-            Channel channel = PlayerUtil.getChannel(p);
-            channel.pipeline().addBefore("packet_handler", "boat", new PacketListener(p));
-        } catch (Exception ex) {
-            getLogger().warning("Failed to inject channel handler to " + p.getName() + ": catch :" + ex);
-        }
-    }
 
     @EventHandler
     public void onInteract(@NotNull PlayerInteractEvent e) {
@@ -54,7 +42,7 @@ public class BoatListener implements Listener {
         Bukkit.getScheduler().runTaskLaterAsynchronously(azisaba.net.boat.Boat.get(), ()-> ct.remove(p.getName()), 10L);
 
         float yaw = p.getBodyYaw();
-        Boat.Type type = PlayerUtil.getBoat(ran.nextInt(6));
+        Boat.Type type = getBoat(ran.nextInt(6));
 
         if (!(needType)) type = BoatType;
 
@@ -73,5 +61,11 @@ public class BoatListener implements Listener {
         if (e.getExited() instanceof Player && e.getVehicle() instanceof Boat boat) {
             boat.remove();
         }
+    }
+
+    @EventHandler
+    public void onJoin(@NotNull PlayerJoinEvent e) {
+
+        MMOUtils.getUtils().packetSetUP(e.getPlayer(), azisaba.net.boat.Boat.id, new PacketListener(e.getPlayer()));
     }
 }

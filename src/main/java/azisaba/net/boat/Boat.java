@@ -1,9 +1,7 @@
 package azisaba.net.boat;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelPipeline;
+import azisaba.net.mmoutils.MMOUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -12,9 +10,11 @@ import java.util.Objects;
 public final class Boat extends JavaPlugin {
 
     private static Boat boat;
+    public static final String id = "boat";
 
     @Override
     public void onEnable() {
+
         saveDefaultConfig();
         boat = this;
         // Plugin startup logic
@@ -22,31 +22,13 @@ public final class Boat extends JavaPlugin {
         Objects.requireNonNull(getCommand("boat")).setExecutor(new BoatCommand());
         pm.registerEvents(new BoatListener(), this);
 
-        for (Player p: Bukkit.getOnlinePlayers()) {
-            try {
-                Channel channel = PlayerUtil.getChannel(p);
-                channel.pipeline().addBefore("packet_handler", "boat", new PacketListener(p));
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                getLogger().warning("Failed to inject channel handler to " + p.getName() + ": catch :" + e);
-            }
-        }
+        Bukkit.getOnlinePlayers().forEach(player -> MMOUtils.getUtils().packetSetUP(player, id, new PacketListener(player)));
     }
 
     public static Boat get() {return boat;}
 
     @Override
     public void onDisable() {
-
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            try {
-                Channel channel = PlayerUtil.getChannel(p);
-                ChannelPipeline pipeline = channel.pipeline();
-                if (pipeline.get("boat") != null) {
-                    pipeline.remove("boat");
-                }
-            } catch (Exception e) {
-                return;
-            }
-        }
+        Bukkit.getOnlinePlayers().forEach(player -> MMOUtils.getUtils().packetRemove(player, id));
     }
 }
